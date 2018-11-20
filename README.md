@@ -124,34 +124,12 @@ In case more than one user has been mentioned in a tweet, you must consider only
 
 Also, one user might mention another user more than one time. In this case, you should only save the edge once (i.e. only one row in the graph table).
 
-You should save this table because you will be using it for the next few questions. Look at the example provided below to see how you can save tables on BigQuery using the Python API. 
+You must save this table since you will be using it for the next few questions.
 
-    from google.cloud import bigquery
-    client = bigquery.Client()
-    dataset_id = 'dataset'
+To save a table, there are two options:
+1. Use the API to save job results in a table, as in the example function ``savetable()`` in the starter code. The dataset_id refers to the name of the dataset which you created and the table_ref variable specifies the name of the table to which the results will be saved into. For further reference, you can check the following link: [Saving Results to Table](https://cloud.google.com/bigquery/docs/writing-results).
+2. Issue a regular query using ``CREATE OR REPLACE TABLE table_name_here AS SELECT ...``
 
-    job_config = bigquery.QueryJobConfig()
-    # Set use_legacy_sql to True to use legacy SQL syntax.
-    job_config.use_legacy_sql = True
-    # Set the destination table
-    table_ref = client.dataset(dataset_id).table('test')
-    job_config.destination = table_ref
-    job_config.allow_large_results = True
-    sql = """select * from [w4111-columbia.graph.tweets] limit 3"""
-
-    # Start the query, passing in the extra configuration.
-    query_job = client.query(
-        sql,
-        # Location must match that of the dataset(s) referenced in the query
-        # and of the destination table.
-        location='US',
-        job_config=job_config)  # API request - starts the query
-
-    query_job.result()  # Waits for the query to finish
-    print('Query results loaded to table {}'.format(table_ref.path))
-
-The dataset_id refers to the name of the dataset which you created and the table_ref variable specifies the name of the table to which the results will be saved into. 
-For further reference, you can check the following link: [Saving Results to Table](https://cloud.google.com/bigquery/docs/writing-results).
 
 ##### Q4
 The indegree of a node in a directed graph is defined as the number of edges which are incoming on the node. Similarly, the outdegree of a node in a directed graph is defined as the number of edges which are outgoing from the node. For more information, you can read - [Indegree and Outdegree](https://en.wikipedia.org/wiki/Directed_graph#Indegree_and_outdegree)
