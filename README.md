@@ -67,9 +67,19 @@ References
 * https://cloud.google.com/bigquery/create-simple-app-api#bigquery-simple-app-local-dev-python
 
 
+### Starter Code
+You can use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:        
+        
+        python graph.py [path_to_credentials_file]
+
+If everything has been setup correctly, you will be able to see the output for the testquery function inside the graph.py file.
+
+To start working on your solutions, you must write queries for each question inside the corresponding functions.
+
+
 ### Queries
 
-Implement the functions in the Python file to return the rows corresponding to the answers to the following questions:
+Implement the functions in ``graph.py`` to return the rows corresponding to the answers to the following questions.
 
 ##### Q1
 
@@ -83,14 +93,18 @@ For example:
 
 Your answer should be a single query containing the columns:
 - id (id of the tweets)
-- text (text of the tweets) 
+- text (text of the tweets)
+
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
 
 ##### Q2
 Engagement for Twitch streamers with their followers can be measured by the number of likes they get on their tweets. Find out which day of the week on average gets the maximum number of likes.
 
 Your answer should be a single query containing the columns:
 - day (day of the week)
-- avg_likes (average number of likes for the day) 
+- avg_likes (average number of likes for the day)
+
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
 
 ##### Q3
 
@@ -102,11 +116,13 @@ Take a look at the [regular expressions documentation for BigQuery](https://clou
 
 Find all the tweets that @ mention another user. The tweets mentioning other users can be looked at as a directed edge from the tweeter to the mentioned user and hence we can look at it as a directed graph where each row is an edge between a tweeter and the user that the tweet mentions. Create a table “GRAPH” with column names src and dst which stores the edge list of the graph. You must store only the distinct edges in the table.
 
-Your answer should be a single query containing the columns:
+Your table should contain the following columns:
 - src (the twitter_username of the user)
 - dst (the twitter_username of the user mentioned in the tweet)
 
 In case more than one user has been mentioned in a tweet, you must consider only the user which has been mentioned first. 
+
+Also, one user might mention another user more than one time. In this case, you should only save the edge once (i.e. only one row in the graph table).
 
 You should save this table because you will be using it for the next few questions. Look at the example provided below to see how you can save tables on BigQuery using the Python API. 
 
@@ -146,6 +162,8 @@ Your answer should be a single query containing the columns:
 - max_indegree
 - max_outdegree
 
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+
 ##### Q5
 Let us define 4 categories of Twitter users. We will use the average number of likes a user gets on his/her tweets as the first metric and the number of times they are mentioned by other users in tweets (i.e. indegree) as the second metric. Then we can classify each user as follows:
 - High indegree, high average number of likes 
@@ -164,19 +182,25 @@ Now, you need to find the conditional probability, that given an unpopular user,
 Your answer should be a query containing the column:
 - popular_unpopular (conditional probability P(@ mentions popular user | is unpopular))
 
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+
 ##### Q6
 Given a graph G = (V, E), a “triangle” is a set of three vertices that are mutually adjacent in G i.e. given 3 nodes of a graph A, B, C there exist edges A->B, B->C and C->A which form a triangle in the graph. From the graph table which you created above, find out the number of triangles in the graph.
 
 For the first part, your answer should be a single query containing the column:
 - no_of_triangles
 
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+
 ##### Q7
 The PageRank algorithm is used to rank the importance of nodes in a graph. It works by counting the number of edges incident to a node to determine how important the node is. The underlying assumption is that more important nodes are likely to receive more links from other nodes. Find the top 100 nodes with the highest PageRank in the graph.
-Hint: It is not possible to use "WITH RECURSIVE" on BigQuery. You must develop a recursive implementation for PageRank. You can look at the recursive implementation of BFS provided below to get started.
+Hint: It is not possible to use "WITH RECURSIVE" on BigQuery. You must develop a iterative implementation for PageRank (like the BFS example mentioned below).
 
 You must run the algorithm for 20 iterations and your output table should contain the following columns:
 - twitter_username (the twitter_username of the user)
-- PageRank
+- PageRank score
+
+Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
 
 You must implement only the simplified version of the PageRank algorithm. 
 This algorithm works as follows - Assume a small universe of four web pages: A, B, C and D. PageRank is initialized to the same value for all pages since we assume a probability distribution between 0 and 1 as the PageRank for each node. Hence the initial value for each page in this example is 0.25. If the only links in the system were from pages B->A, C->A and D->A, each link would transfer 0.25 PageRank to A upon the next iteration, for a total of 0.75 i.e. PR(A) = PR(B) + PR(C) + PR(D). 
@@ -193,81 +217,12 @@ It is given by the formula: ![](https://www.geeksforgeeks.org/wp-content/ql-cach
 To read more about PageRank, you can refer to the following link: [PageRank](http://home.ie.cuhk.edu.hk/~wkshum/papers/pagerank.pdf)
 
 
-### Starter Code
-You can use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:        
-        
-        python graph.py [path_to_credentials_file]
+For this question, you will need to develop an iterative solution, i.e. your python code will act as a driver and issue multiple queries to BigQuery iteratively. As an example, we provided an iterative implementation of Breadth First Search on the starter code.
 
-If everything has been setup correctly, you must be able to see the output for the testquery function inside the graph.py file.
+To execute 5 iterations using A as a start node, you can simply call ``bfs(client, 'A', 5)``.
 
-To start working on your solutions, you must write queries for each question inside the corresponding functions.
+The example saves the nodes visited at each iteration in a table ``distances``, along with their distance to the initial node. The function itself does not return any value (however, remind that you will be required to return values for Q7).
 
-For q7, you will need to develop an iterative solution. Look at the following iterative implementation of Breadth First Search:
-
-     def bfs(client, start, n_iter):
-            
-            q1 = """
-                CREATE TABLE IF NOT EXISTS bfs_graph (src string, dst string);
-                """
-            q2 = """
-                INSERT INTO bfs_graph VALUES
-                ('A', 'B'),
-                ('A', 'E'),
-                ('B', 'C'),
-                ('C', 'D'),
-                ('E', 'F'),
-                ('F', 'D');
-                ('A', 'F'),
-                ('B', 'E'),
-                ('B', 'F'),
-                ('A', 'G'),
-                ('B', 'G'),
-                ('F', 'G');
-                ('H', 'A'),
-                ('G', 'H'),
-                ('H', 'C'),
-                ('H', 'D'),
-                ('E', 'H'),
-                ('F', 'H');
-                """
-            
-            job = client.query(q1)
-            job.result()
-            job = client.query(q2)
-            job.result()
-            
-            q3 = """
-            CREATE OR REPLACE TABLE dataset.distances AS
-            SELECT '{start}' as node, 0 as distance
-            """.format(start=start)
-            job = client.query(q3)
-            # Result will be empty, but calling makes the code wait for the query to complete
-            job.result()
-
-            for i in range(n_iter):
-                print "Step %d..." % (i+1)
-                q1 = """
-                INSERT INTO dataset.distances(node, distance)
-                SELECT distinct dst, {next_distance}
-                FROM bfs_graph
-                WHERE src IN (
-                    SELECT node
-                    FROM dataset.distances
-                    WHERE distance = {curr_distance}
-                    )
-                AND dst NOT IN (
-                    SELECT node
-                    FROM dataset.distances
-                    )
-                """.format(
-                    curr_distance=i,
-                    next_distance=i+1
-                )
-                job = client.query(q1)
-                results = job.result()
-                # print(results)
-
-You can use the above implementation of the BFS algorithm as a starting point for writing your own iterative implementation of the PageRank algorithm for Q7.
 
 ### Submission Instructions
 Submit the modified ``graph.py`` file on Courseworks. There should be only one submission per group. You must mention the UNIs of both group members while submitting. You will be graded based on the correctness of your queries. We will execute each query function so each function should be able to be called. We will match the table generated by your query with the solution table for each question.   
