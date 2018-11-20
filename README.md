@@ -146,6 +146,8 @@ Your answer should be a single query containing the columns:
 - twitter_username (the twitter_username of the user)
 - PageRank
 
+You must implement only the simplified version of the PageRank algorithm. To read more about it, you can refer to the following link: [PageRank](http://home.ie.cuhk.edu.hk/~wkshum/papers/pagerank.pdf)
+
 ### Starter Code
 You can use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:        
         
