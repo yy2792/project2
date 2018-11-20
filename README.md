@@ -198,7 +198,7 @@ Hint: It is not possible to use "WITH RECURSIVE" on BigQuery. You must develop a
 
 You must run the algorithm for 20 iterations and your output table should contain the following columns:
 - twitter_username (the twitter_username of the user)
-- PageRank score
+- page_rank_score
 
 Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
 
