@@ -156,7 +156,7 @@ To start working on your solutions, you must write queries for each question ins
 
 For q7, you will need to develop an iterative solution. Look at the following iterative implementation of Breadth First Search:
 
-def bfs(client, start, n_iter):
+    def bfs(client, start, n_iter):
     q1 = """
     CREATE OR REPLACE TABLE dataset.distances AS
     SELECT '{start}' as node, 0 as distance
