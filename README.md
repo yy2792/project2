@@ -147,8 +147,9 @@ Your answer should be a single query containing the columns:
 - PageRank
 
 ### Starter Code
-You can use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:
-python graph.py [path_to_credentials_file]
+You can use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:        
+        
+        python graph.py [path_to_credentials_file]
 
 If everything has been setup correctly, you must be able to see the output for the testquery function inside the graph.py file.
 
