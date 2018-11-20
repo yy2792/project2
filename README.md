@@ -95,7 +95,7 @@ Your answer should be a single query containing the columns:
 - id (id of the tweets)
 - text (text of the tweets)
 
-Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+Just like ``testquery``, you should return the output of ``job.results()`` in a list.
 
 ##### Q2
 Engagement for Twitch streamers with their followers can be measured by the number of likes they get on their tweets. Find out which day of the week on average gets the maximum number of likes.
@@ -104,7 +104,7 @@ Your answer should be a single query containing the columns:
 - day (day of the week)
 - avg_likes (average number of likes for the day)
 
-Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+Just like ``testquery``, you should return the output of ``job.results()`` in a list.
 
 ##### Q3
 
@@ -162,7 +162,7 @@ Your answer should be a single query containing the columns:
 - max_indegree
 - max_outdegree
 
-Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+Just like ``testquery``, you should return the output of ``job.results()`` in a list.
 
 ##### Q5
 Let us define 4 categories of Twitter users. We will use the average number of likes a user gets on his/her tweets as the first metric and the number of times they are mentioned by other users in tweets (i.e. indegree) as the second metric. Then we can classify each user as follows:
@@ -182,7 +182,7 @@ Now, you need to find the conditional probability, that given an unpopular user,
 Your answer should be a query containing the column:
 - popular_unpopular (conditional probability P(@ mentions popular user | is unpopular))
 
-Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+Just like ``testquery``, you should return the output of ``job.results()`` in a list.
 
 ##### Q6
 Given a graph G = (V, E), a “triangle” is a set of three vertices that are mutually adjacent in G i.e. given 3 nodes of a graph A, B, C there exist edges A->B, B->C and C->A which form a triangle in the graph. From the graph table which you created above, find out the number of triangles in the graph.
@@ -200,7 +200,7 @@ You must run the algorithm for 20 iterations and your output table should contai
 - twitter_username (the twitter_username of the user)
 - page_rank_score
 
-Just like ``testquery``, you should return the ouput of ``job.results()`` in a list.
+Just like ``testquery``, you should return the output of ``job.results()`` in a list.
 
 You must implement only the simplified version of the PageRank algorithm. 
 This algorithm works as follows - Assume a small universe of four web pages: A, B, C and D. PageRank is initialized to the same value for all pages since we assume a probability distribution between 0 and 1 as the PageRank for each node. Hence the initial value for each page in this example is 0.25. If the only links in the system were from pages B->A, C->A and D->A, each link would transfer 0.25 PageRank to A upon the next iteration, for a total of 0.75 i.e. PR(A) = PR(B) + PR(C) + PR(D). 
