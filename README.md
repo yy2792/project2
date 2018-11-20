@@ -54,7 +54,7 @@ The edges in the graph are based on the `in_reply` attribute, which is the `id` 
 
 #### Setup
 
-We have [provided a starter script for you to edit](./graph.py).  To use this script, you will need to setup your local development environment. Follow the instructions provided in the [Local Setup Instructions PDF](https://cloud.google.com/python/setup).
+We have [provided a starter script for you to edit](./graph.py).  To use this script, you will need to setup your local development environment. Follow the instructions provided in the [Setup Instructions PDF](https://github.com/w4111/project2/blob/master/Project%20Setup%20Instructions.pdf).
 
 Once you successfully setup your local development environment, then you can edit [graph.py](./graph.py) to update the `PATHTOCRED` variable to where you stored the credentials file and then run the script.  
 
