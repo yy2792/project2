@@ -66,6 +66,7 @@ References
 
 * https://cloud.google.com/bigquery/create-simple-app-api#bigquery-simple-app-local-dev-python
 
+For more instructions regarding the setup, you can check the following link: https://cloud.google.com/python/setup 
 
 ### Starter Code
 You should use the starter code provided in the graph.py file. You should write SQL queries for all the questions. To check if your environment has been setup correctly, you can run the graph.py file as follows:        
