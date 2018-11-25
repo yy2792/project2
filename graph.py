@@ -157,10 +157,7 @@ def main(pathtocred):
     funcs_to_test = [testquery]
     for func in funcs_to_test:
         rows = func(client)
-        print('type of rows ' , type(rows))
         print ("\n====%s====" % func.__name__)
-        #for r in rows:
-    #        print (r)
         print(rows)
 
     #bfs(client, 'A', 5)
