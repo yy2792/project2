@@ -1,6 +1,9 @@
 import click
 from google.cloud import bigquery
 
+uni1 = '' # Your uni
+uni2 = '' # Partner's uni. If you don't have a partner, put None
+
 # Test function
 def testquery(client):
     q = """select * from `w4111-columbia.graph.tweets` limit 3"""
@@ -56,23 +59,24 @@ def q7(client):
 # Do not edit this function. This is for helping you develop your own iterative PageRank algorithm.
 def bfs(client, start, n_iter):
 
+    # You should replace dataset.bfs_graph with your dataset name and table name.
     q1 = """
-        CREATE TABLE IF NOT EXISTS bfs_graph (src string, dst string);
+        CREATE TABLE IF NOT EXISTS dataset.bfs_graph (src string, dst string);
         """
     q2 = """
-        INSERT INTO bfs_graph VALUES
+        INSERT INTO dataset.bfs_graph(src, dst) VALUES
         ('A', 'B'),
         ('A', 'E'),
         ('B', 'C'),
         ('C', 'D'),
         ('E', 'F'),
-        ('F', 'D');
+        ('F', 'D'),
         ('A', 'F'),
         ('B', 'E'),
         ('B', 'F'),
         ('A', 'G'),
         ('B', 'G'),
-        ('F', 'G');
+        ('F', 'G'),
         ('H', 'A'),
         ('G', 'H'),
         ('H', 'C'),
@@ -82,10 +86,11 @@ def bfs(client, start, n_iter):
         """
 
     job = client.query(q1)
-    job.result()
+    results = job.result()
     job = client.query(q2)
-    job.result()
+    results = job.result()
 
+    # You should replace dataset.distances with your dataset name and table name. 
     q3 = """
         CREATE OR REPLACE TABLE dataset.distances AS
         SELECT '{start}' as node, 0 as distance
@@ -95,11 +100,11 @@ def bfs(client, start, n_iter):
     job.result()
 
     for i in range(n_iter):
-        print "Step %d..." % (i+1)
+        print("Step %d..." % (i+1))
         q1 = """
         INSERT INTO dataset.distances(node, distance)
         SELECT distinct dst, {next_distance}
-        FROM bfs_graph
+        FROM dataset.bfs_graph
             WHERE src IN (
                 SELECT node
                 FROM dataset.distances
@@ -113,9 +118,9 @@ def bfs(client, start, n_iter):
                 curr_distance=i,
                 next_distance=i+1
             )
-            job = client.query(q1)
-            results = job.result()
-                # print(results)
+        job = client.query(q1)
+        results = job.result()
+        # print(results)
 
 
 # Do not edit this function. You can use this function to see how to store tables using BigQuery.
@@ -152,10 +157,13 @@ def main(pathtocred):
     funcs_to_test = [testquery]
     for func in funcs_to_test:
         rows = func(client)
+        print('type of rows ' , type(rows))
         print ("\n====%s====" % func.__name__)
-        for r in rows:
-            print (r)
+        #for r in rows:
+    #        print (r)
+        print(rows)
 
+    #bfs(client, 'A', 5)
 
 if __name__ == "__main__":
   main()
