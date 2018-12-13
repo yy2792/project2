@@ -1,7 +1,7 @@
 ### Project 2: Graph Analysis
 
 * Released: 11/20
-* Due: 12/10 10AM
+* Due: 12/17 10AM
 * Value: 5% of your grade
 * Max team of 2
 
