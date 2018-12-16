@@ -1,8 +1,8 @@
 import click
 from google.cloud import bigquery
 
-uni1 = '' # Your uni
-uni2 = '' # Partner's uni. If you don't have a partner, put None
+uni1 = 'yy2792' # Your uni
+uni2 = None # Partner's uni. If you don't have a partner, put
 
 # Test function
 def testquery(client):
@@ -16,20 +16,54 @@ def testquery(client):
 # SQL query for Question 1. You must edit this funtion.
 # This function should return a list of IDs and the corresponding text.
 def q1(client):
+    q = """
+        select id, text from `w4111-columbia.graph.tweets`
+        where UPPER(text) like UPPER('%going live%')
+        and UPPER(text) like UPPER('%www.twitch%')
+        """
 
-    return []
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 2. You must edit this funtion.
 # This function should return a list of days and their corresponding average likes.
 def q2(client):
 
-    return []
+    q = """
+        select avg(like_num) avg_likes, substr(create_time, 1, 3) as day from `w4111-columbia.graph.tweets`
+        group by day
+        order by avg_likes DESC
+        limit 1
+        """
+
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 3. You must edit this funtion.
 # This function should return a list of source nodes and destination nodes in the graph.
 def q3(client):
 
-    return []
+    q = """
+        select temp.src, temp.dst
+        from (select twitter_username src, REGEXP_EXTRACT(REGEXP_EXTRACT(text, '@[^\\\s]+'), '[^@]+') dst
+            from `w4111-columbia.graph.tweets`
+            where REGEXP_CONTAINS(text, '@[^\\\s]+')
+            ) temp
+        group by src, dst
+        limit 2
+        """
+
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 4. You must edit this funtion.
 # This function should return a list containing the twitter username of the users having the max indegree and max outdegree.
@@ -154,7 +188,8 @@ def main(pathtocred):
     client = bigquery.Client.from_service_account_json(pathtocred)
 
     #funcs_to_test = [q1, q2, q3, q4, q5, q6, q7]
-    funcs_to_test = [testquery]
+    #funcs_to_test = [testquery]
+    funcs_to_test = [q3]
     for func in funcs_to_test:
         rows = func(client)
         print ("\n====%s====" % func.__name__)
