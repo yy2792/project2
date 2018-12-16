@@ -50,20 +50,18 @@ def q2(client):
 def q3(client):
 
     q = """
-        select temp.src, temp.dst
-        from (select twitter_username src, REGEXP_EXTRACT(REGEXP_EXTRACT(text, '@[^\\\s]+'), '[^@]+') dst
-            from `w4111-columbia.graph.tweets`
-            where REGEXP_CONTAINS(text, '@[^\\\s]+')
-            ) temp
-        group by src, dst
-        limit 2
+        create or replace table dataset.twit_edges as(
+            select temp.src, temp.dst
+            from (select twitter_username src, REGEXP_EXTRACT(REGEXP_EXTRACT(text, '@[^\\\s]+'), '[^@]+') dst
+                from `w4111-columbia.graph.tweets`
+                where REGEXP_CONTAINS(text, '@[^\\\s]+')
+                ) temp
+            group by src, dst);
         """
 
-    job = client.query(q)
+    client.query(q)
 
-    results = job.result()
-
-    return list(results)
+    return True
 
 # SQL query for Question 4. You must edit this funtion.
 # This function should return a list containing the twitter username of the users having the max indegree and max outdegree.
