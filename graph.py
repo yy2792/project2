@@ -87,7 +87,58 @@ def q4(client):
 # This function should return a list containing value of the conditional probability.
 def q5(client):
 
-    return []
+    q = """
+            with qind as (
+                select count(src) as indegrees, dst from dataset.twit_edges group by dst order by indegrees
+                ),
+            qoutd as(
+            select count(dst) as outdegrees, src from dataset.twit_edges group by src order by outdegrees 
+            ),
+            inout as(
+            select o.src as username, i.indegrees, o.outdegrees from qoutd o, qind i
+            where i.dst = o.src
+            ),
+            likes as(
+            select avg(like_num) avg_likes, twitter_username from `w4111-columbia.graph.tweets` group by twitter_username
+            ),
+            avg_likes as (
+            select avg(like_num) from inout, `w4111-columbia.graph.tweets` w
+            where w.twitter_username = inout.username
+            ),
+            avg_indg as (
+            select avg(indegrees) from inout 
+            ),
+            combine as(
+            select inout.username, inout.indegrees, likes.avg_likes, (likes.avg_likes >= (select * from avg_likes)) high_like, 
+            (inout.indegrees >= (select * from avg_indg)) high_ind
+            from inout, likes where likes.twitter_username = inout.username
+            ),
+            popular as (
+            select username from combine
+            where high_like = True and high_ind = True
+            ),
+            unpopular as (
+            select username from combine
+            where high_like = False and high_ind = False
+            ),
+            deno as (
+            select count(*)
+            from dataset.twit_edges
+            where src in (select * from unpopular)
+            ),
+            nomi as (
+            select count(*)
+            from dataset.twit_edges
+            where src in (select * from unpopular) and dst in (select * from popular)
+            )
+            select(select * from nomi) / (select * from deno)
+            """
+
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 6. You must edit this funtion.
 # This function should return a list containing the value for the number of triangles in the graph.
@@ -203,7 +254,7 @@ def main(pathtocred):
 
     #funcs_to_test = [q1, q2, q3, q4, q5, q6, q7]
     #funcs_to_test = [testquery]
-    funcs_to_test = [q4]
+    funcs_to_test = [q5]
     for func in funcs_to_test:
         rows = func(client)
         print ("\n====%s====" % func.__name__)
