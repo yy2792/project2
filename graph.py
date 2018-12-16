@@ -67,7 +67,21 @@ def q3(client):
 # This function should return a list containing the twitter username of the users having the max indegree and max outdegree.
 def q4(client):
 
-    return []
+    q = """
+        with qind as (
+            select count(src) as indegrees, dst from dataset.twit_edges group by dst order by indegrees DESC limit 1
+            ),
+        qoutd as(
+        select count(dst) as outdegrees, src from dataset.twit_edges group by src order by outdegrees DESC limit 1
+        )
+        select dst as max_indegree, src as max_outdegree from qind, qoutd
+        """
+
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 5. You must edit this funtion.
 # This function should return a list containing value of the conditional probability.
@@ -150,7 +164,9 @@ def bfs(client, start, n_iter):
                 curr_distance=i,
                 next_distance=i+1
             )
+
         job = client.query(q1)
+
         results = job.result()
         # print(results)
 
@@ -187,7 +203,7 @@ def main(pathtocred):
 
     #funcs_to_test = [q1, q2, q3, q4, q5, q6, q7]
     #funcs_to_test = [testquery]
-    funcs_to_test = [q3]
+    funcs_to_test = [q4]
     for func in funcs_to_test:
         rows = func(client)
         print ("\n====%s====" % func.__name__)
