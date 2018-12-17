@@ -56,7 +56,8 @@ def q3(client):
                 from `w4111-columbia.graph.tweets`
                 where REGEXP_CONTAINS(text, '@[^\\\s]+')
                 ) temp
-            group by src, dst);
+            where temp.src != temp.dst
+            group by temp.src, temp.dst);
         """
 
     client.query(q)
@@ -143,8 +144,19 @@ def q5(client):
 # SQL query for Question 6. You must edit this funtion.
 # This function should return a list containing the value for the number of triangles in the graph.
 def q6(client):
+    q = """
+        select count(*) no_of_triangles from (
+            select d1.src A, d1.dst B, d2.dst C
+            from dataset.twit_edges d1, dataset.twit_edges d2, dataset.twit_edges d3
+            where d1.dst = d2.src and d2.dst = d3.src and d3.dst = d1.src
+            group by A, B, C)
+        """
 
-    return []
+    job = client.query(q)
+
+    results = job.result()
+
+    return list(results)
 
 # SQL query for Question 7. You must edit this funtion.
 # This function should return a list containing the twitter username and their corresponding PageRank.
@@ -254,7 +266,7 @@ def main(pathtocred):
 
     #funcs_to_test = [q1, q2, q3, q4, q5, q6, q7]
     #funcs_to_test = [testquery]
-    funcs_to_test = [q5]
+    funcs_to_test = [q3, q6]
     for func in funcs_to_test:
         rows = func(client)
         print ("\n====%s====" % func.__name__)
