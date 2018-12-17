@@ -162,7 +162,70 @@ def q6(client):
 # This function should return a list containing the twitter username and their corresponding PageRank.
 def q7(client):
 
-    return []
+    q1 = """
+        CREATE OR REPLACE TABLE dataset.const_count AS (
+        select (1 / count(distinct dst)) score from dataset.twit_edges
+        )
+        """
+
+    job = client.query(q1)
+
+    q2 = """
+        CREATE OR REPLACE TABLE dataset.pagerank AS (
+        select distinct dst as node, 0 as distance, (select score from dataset.const_count) as score
+        from dataset.twit_edges
+        )
+        """
+
+    job = client.query(q2)
+
+    q3 = """
+        CREATE OR REPLACE TABLE dataset.qoutd AS(
+        select count(dst) as outdegrees, src node from dataset.twit_edges group by src order by outdegrees 
+        )
+        """
+
+    job = client.query(q3)
+
+    for i in range(20):
+        print("Step %d..." % (i+1))
+
+
+        q0 = """
+            INSERT INTO dataset.pagerank(node, distance, score)
+            with temp as (
+            select p.node, (p.score / q.outdegrees) temp_score
+            from dataset.qoutd q, dataset.pagerank p
+            where p.node = q.node and p.distance = {curr_distance}
+            group by p.node, temp_score
+            ),
+            temp2 as (
+            select t1.src, t1.dst, temp.temp_score
+            from dataset.twit_edges t1, temp
+            where t1.src = temp.node
+            group by t1.src, t1.dst, temp.temp_score
+            )
+            SELECT temp2.dst, {next_distance}, sum(temp2.temp_score)
+            from temp2
+            group by temp2.dst
+            """.format(
+            curr_distance=i,
+            next_distance=i+1)
+
+        job = client.query(q0)
+
+        results = job.result()
+
+    q1 = """
+        select * from dataset.pagerank where distance = 20 order by score DESC limit 100
+        """
+
+    job = client.query(q1)
+
+    results = job.result()
+
+    return (list(results))
+
 
 
 # Do not edit this function. This is for helping you develop your own iterative PageRank algorithm.
@@ -266,7 +329,7 @@ def main(pathtocred):
 
     #funcs_to_test = [q1, q2, q3, q4, q5, q6, q7]
     #funcs_to_test = [testquery]
-    funcs_to_test = [q3, q6]
+    funcs_to_test = [q3, q7]
     for func in funcs_to_test:
         rows = func(client)
         print ("\n====%s====" % func.__name__)
