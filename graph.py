@@ -217,7 +217,7 @@ def q7(client):
         results = job.result()
 
     q1 = """
-        select * from dataset.pagerank where distance = 20 order by score DESC limit 100
+        select node as twitter_username, score as page_rank_score from dataset.pagerank where distance = 20 order by score DESC limit 100
         """
 
     job = client.query(q1)
